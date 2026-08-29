@@ -1316,6 +1316,69 @@ body{background:#f4f7fc}.workspace{padding:8px 10px 18px}.app-topbar{height:92px
 	  .rhythm-redesign .od-collapse-btn{width:100%;min-width:0}
 	}
 	
+	/* Ajuste v15: evitar solape entre titulo y toolbar */
+	.rhythm-redesign .od-activity-head{
+	  grid-template-columns:minmax(390px,500px) auto;
+	  gap:16px;
+	}
+	.rhythm-title-wrap{
+	  max-width:500px;
+	}
+	.rhythm-subtitle{
+	  max-width:420px;
+	}
+	.rhythm-redesign .od-activity-actions{
+	  gap:8px;
+	  padding-right:20px;
+	  flex:0 0 auto;
+	}
+	.rhythm-redesign .activity-type-menu{
+	  width:238px;
+	}
+	.rhythm-redesign .activity-type-current span:not(.activity-type-dot){
+	  max-width:128px;
+	}
+	.rhythm-redesign .od-month-select-wrap{
+	  width:198px;
+	  min-width:198px;
+	  padding-left:10px;
+	  padding-right:7px;
+	  gap:6px;
+	}
+	.rhythm-redesign .od-month-select{
+	  width:88px;
+	  font-size:11px;
+	  padding-right:19px;
+	}
+	.rhythm-redesign .od-collapse-btn{
+	  width:178px;
+	  font-size:11px;
+	  padding-left:9px;
+	  padding-right:9px;
+	}
+	@media(max-width:1440px){
+	  .rhythm-redesign .od-activity-head{
+	    grid-template-columns:minmax(360px,470px) auto;
+	  }
+	  .rhythm-title-wrap{max-width:470px}
+	  .rhythm-subtitle{max-width:390px}
+	  .rhythm-redesign .activity-type-menu{width:232px}
+	  .rhythm-redesign .od-month-select-wrap{width:192px;min-width:192px}
+	  .rhythm-redesign .od-collapse-btn{width:172px}
+	  .rhythm-redesign .od-activity-actions{gap:8px;padding-right:18px}
+	}
+	@media(max-width:1240px){
+	  .rhythm-redesign .od-activity-head{grid-template-columns:1fr}
+	  .rhythm-title-wrap{max-width:none}
+	  .rhythm-subtitle{max-width:none;white-space:normal;overflow:visible}
+	  .rhythm-redesign .od-activity-actions{justify-content:flex-start;padding-right:0}
+	}
+	@media(max-width:760px){
+	  .rhythm-redesign .activity-type-menu,
+	  .rhythm-redesign .od-month-select-wrap,
+	  .rhythm-redesign .od-collapse-btn{width:100%;min-width:0}
+	}
+	
 	</style>
 </head>
 <body>
