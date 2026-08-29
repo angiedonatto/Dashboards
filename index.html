@@ -1118,6 +1118,105 @@ body{background:#f4f7fc}.workspace{padding:8px 10px 18px}.app-topbar{height:92px
 	  .rhythm-redesign .od-month-select-wrap{width:100%}
 	}
 	
+	/* Ajuste v13: toolbar de filtros compacta y alineada */
+	.rhythm-redesign .od-activity-head{
+	  grid-template-columns:minmax(280px,1fr) auto;
+	  gap:14px;
+	}
+	.rhythm-redesign .od-activity-actions{
+	  justify-content:flex-end;
+	  align-items:center;
+	  gap:12px;
+	  padding-right:2px;
+	}
+	.rhythm-redesign .activity-type-menu{
+	  width:310px;
+	}
+	.rhythm-redesign .activity-type-trigger,
+	.rhythm-redesign .od-month-select-wrap,
+	.rhythm-redesign .od-collapse-btn{
+	  height:48px;
+	  min-height:48px;
+	  max-height:48px;
+	  border-radius:14px;
+	  border:1px solid #dce6f5;
+	  padding-top:0;
+	  padding-bottom:0;
+	  box-shadow:0 4px 12px rgba(31,57,105,.04);
+	}
+	.rhythm-redesign .activity-type-trigger{
+	  padding-left:14px;
+	  padding-right:12px;
+	  gap:10px;
+	}
+	.rhythm-redesign .activity-type-current{
+	  flex:1 1 auto;
+	  gap:8px;
+	}
+	.rhythm-redesign .activity-type-count{
+	  flex:0 0 auto;
+	  min-width:34px;
+	  height:22px;
+	}
+	.rhythm-redesign .activity-type-chevron{
+	  flex:0 0 auto;
+	  width:14px;
+	  height:14px;
+	}
+	.rhythm-redesign .od-month-select-wrap{
+	  width:250px;
+	  min-width:250px;
+	  padding-left:14px;
+	  padding-right:10px;
+	  gap:8px;
+	}
+	.rhythm-redesign .od-month-label,
+	.rhythm-redesign .rhythm-month-icon{
+	  flex:0 0 auto;
+	}
+	.rhythm-redesign .od-month-select{
+	  flex:1 1 auto;
+	  width:auto;
+	  min-width:0;
+	  height:46px;
+	  min-height:46px;
+	  max-height:46px;
+	  padding-left:0;
+	  padding-right:24px;
+	}
+	.rhythm-redesign .od-collapse-btn{
+	  width:220px;
+	  justify-content:center;
+	  padding-left:12px;
+	  padding-right:12px;
+	  gap:8px;
+	}
+	.rhythm-redesign .activity-type-list{
+	  top:54px;
+	}
+	@media(max-width:1380px){
+	  .rhythm-redesign .od-activity-head{
+	    grid-template-columns:minmax(260px,1fr) auto;
+	    gap:12px;
+	  }
+	  .rhythm-redesign .od-activity-actions{gap:10px}
+	  .rhythm-redesign .activity-type-menu{width:300px}
+	  .rhythm-redesign .od-month-select-wrap{width:240px;min-width:240px}
+	  .rhythm-redesign .od-collapse-btn{width:210px}
+	}
+	@media(max-width:1260px){
+	  .rhythm-redesign .od-activity-head{grid-template-columns:1fr}
+	  .rhythm-redesign .od-activity-actions{justify-content:flex-start}
+	}
+	@media(max-width:760px){
+	  .rhythm-redesign .activity-type-menu,
+	  .rhythm-redesign .od-month-select-wrap,
+	  .rhythm-redesign .od-collapse-btn{
+	    width:100%;
+	    min-width:0;
+	  }
+	}
+	
 	</style>
 </head>
 <body>
