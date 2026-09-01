@@ -1426,6 +1426,63 @@ body{background:#f4f7fc}.workspace{padding:8px 10px 18px}.app-topbar{height:92px
 	.rhythm-redesign .od-collapse-btn{
 	  justify-content:center;
 	}
+	.rhythm-redesign.is-collapsed .activity-type-list{
+	  display:none!important;
+	}
+
+	/* Ajuste v17: filtros de ritmo con misma altura y eje visual */
+	.rhythm-redesign{
+	  --rhythm-filter-height:52px;
+	}
+	.rhythm-redesign .od-activity-actions{
+	  align-items:center;
+	}
+	.rhythm-redesign .activity-type-row,
+	.rhythm-redesign .activity-type-menu,
+	.rhythm-redesign .od-month-select-wrap,
+	.rhythm-redesign .od-collapse-btn{
+	  height:var(--rhythm-filter-height);
+	  min-height:var(--rhythm-filter-height);
+	  max-height:var(--rhythm-filter-height);
+	}
+	.rhythm-redesign .activity-type-row{
+	  margin-bottom:0;
+	}
+	.rhythm-redesign .activity-type-row,
+	.rhythm-redesign .activity-type-menu{
+	  display:flex!important;
+	  align-items:center;
+	}
+	.rhythm-redesign .activity-type-trigger,
+	.rhythm-redesign .od-month-select-wrap,
+	.rhythm-redesign .od-collapse-btn{
+	  height:var(--rhythm-filter-height);
+	  min-height:var(--rhythm-filter-height);
+	  max-height:var(--rhythm-filter-height);
+	  align-items:center;
+	  border-radius:16px;
+	}
+	.rhythm-redesign .activity-type-trigger{
+	  width:100%;
+	}
+	.rhythm-redesign .od-month-select{
+	  height:calc(var(--rhythm-filter-height) - 2px);
+	  min-height:calc(var(--rhythm-filter-height) - 2px);
+	  max-height:calc(var(--rhythm-filter-height) - 2px);
+	  line-height:normal;
+	  align-self:stretch;
+	  display:flex;
+	  align-items:center;
+	  border:0;
+	  box-shadow:none;
+	  background-color:transparent;
+	}
+	.rhythm-redesign .od-month-label,
+	.rhythm-redesign .rhythm-month-icon,
+	.rhythm-redesign .od-collapse-btn span,
+	.rhythm-redesign .od-collapse-btn svg{
+	  flex:0 0 auto;
+	}
 	
 	</style>
 </head>
@@ -1501,6 +1558,7 @@ body{background:#f4f7fc}.workspace{padding:8px 10px 18px}.app-topbar{height:92px
 var root=document.getElementById('opdash');if(!root||root.dataset.interactive==='1')return;root.dataset.interactive='1';
 var $=function(id){return document.getElementById(id)},state={aging:'',activityType:''};
 function setActivityCollapsed(collapsed){var panel=$('activityPanel'),btn=$('activityToggle'),body=$('activityBody');if(!panel||!btn||!body)return;panel.classList.toggle('is-collapsed',collapsed);btn.setAttribute('aria-expanded',collapsed?'false':'true');btn.querySelector('span').textContent=collapsed?'Mostrar calendario':'Ocultar calendario';body.setAttribute('aria-hidden',collapsed?'true':'false');try{localStorage.setItem('opdashActivityCollapsed',collapsed?'1':'0')}catch(e){}}
+function expandActivityForFilter(){var panel=$('activityPanel');if(panel&&panel.classList.contains('is-collapsed'))setActivityCollapsed(false)}
 function initActivityToggle(){var btn=$('activityToggle'),collapsed=false;try{collapsed=localStorage.getItem('opdashActivityCollapsed')==='1'}catch(e){}setActivityCollapsed(collapsed);if(btn)btn.addEventListener('click',function(){setActivityCollapsed(!$('activityPanel').classList.contains('is-collapsed'))})}
 var clients=['Henkel Colombia S.A.S','Newell Brands de Colombia SAS','FL Colombia S.A.S','Plasticaucho Colombia S.A.','Supplies 4 Pets S.A.S','JAS Colombia','Textiles 1x1','Nautiservicios','Cliente regional A','Cliente regional B'];
 var routes=['Bogotá → Bogotá','Buenaventura → Funza','Funza → Buenaventura','Bogotá → Medellín','Bogotá → Cali','Cali → Bogotá','Bogotá → Cartagena','Cartagena → Bogotá','Funza → Bogotá','Bogotá → Tocancipá'];
@@ -1541,10 +1599,12 @@ if(best){bestLabel=best[0].slice(-2)+' '+names[mo-1].slice(0,3);bestSub=best[1]+
 $('activitySummary').textContent=best?('Mes: '+series.length+' registros · pico el '+best[0].slice(-2)+' con '+best[1]+' registros. Cambia el tipo para segmentar la lectura.'):'Sin actividad registrada para el filtro seleccionado.';
 $('activityStats').innerHTML='<div class="activity-stat"><div class="activity-stat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M9 4.5A3 3 0 0 1 12 2a3 3 0 0 1 3 2.5M10 10h4M10 14h4"/></svg></div><div class="activity-stat-copy"><div class="activity-stat-label">Registros del mes</div><div class="activity-stat-value">'+series.length+'</div><div class="activity-stat-sub">'+selectedLabel+' dentro del mes visible</div></div></div><div class="activity-stat"><div class="activity-stat-icon green"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg></div><div class="activity-stat-copy"><div class="activity-stat-label">Día más activo</div><div class="activity-stat-value">'+bestLabel+'</div><div class="activity-stat-sub">'+bestSub+'</div></div></div><div class="activity-stat"><div class="activity-stat-icon violet"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div><div class="activity-stat-copy"><div class="activity-stat-label">Días con actividad</div><div class="activity-stat-value">'+activeDays+'</div><div class="activity-stat-sub">Promedio de '+(avg?avg.toFixed(1):'0')+' registros por día activo</div></div></div>';
 var menu=$('activityTypeMenu'),trigger=$('activityTypeTrigger');
-if(trigger)trigger.addEventListener('click',function(){var open=!menu.classList.contains('is-open');menu.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',open?'true':'false')});
+if(trigger)trigger.addEventListener('click',function(){expandActivityForFilter();var open=!menu.classList.contains('is-open');menu.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',open?'true':'false')});
 Array.from($('activityTypeFilters').querySelectorAll('[data-atype]')).forEach(function(b){b.addEventListener('click',function(){state.activityType=this.dataset.atype;renderAll()})});
 Array.from($('activityCalendar').querySelectorAll('[data-date]')).forEach(function(b){b.addEventListener('click',function(){var d=this.dataset.date;if($('dateFrom').value===d&&$('dateTo').value===d){$('dateFrom').value=month+'-01';$('dateTo').value=month+'-'+pad(days)}else{$('dateFrom').value=d;$('dateTo').value=d}renderAll()})});
-monthSelect.onchange=function(){var m=this.value;$('dateFrom').value=m+'-01';$('dateTo').value=m+'-'+pad(daysInMonth(m));renderAll()}
+monthSelect.addEventListener('pointerdown',expandActivityForFilter);
+monthSelect.addEventListener('focus',expandActivityForFilter);
+monthSelect.onchange=function(){expandActivityForFilter();var m=this.value;$('dateFrom').value=m+'-01';$('dateTo').value=m+'-'+pad(daysInMonth(m));renderAll()}
 }
 function renderProcess(){var all=rows(true),pending=rows(false),cumplido=all.filter(function(x){return x.status==='Cumplido'}).length,pend=pending.length,total=all.length||1;var solicitudes=Math.max(0,Math.round((pend*0.36)+(($('filterClient').value||$('filterRoute').value)?3:12)));var manifiestos=Math.max(0,Math.round((pend*0.58)+(($('filterState').value==='Cumplido')?0:6)));var cards=[{target:'procSolicitudesContent',title:'Solicitudes sin manifiesto',value:solicitudes,note:'Solicitudes que aún no aterrizan en un manifiesto dentro del filtro actual.',color:'#2f63d7',cls:'blue',icon:'<svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg>',pct:Math.min(100,solicitudes/Math.max(1,total)*100)},{target:'procManifiestosContent',title:'Manifiestos pendientes de cumplir',value:manifiestos,note:'Manifiestos creados que aún no aparecen cumplidos y requieren seguimiento.',color:'#0ca66f',cls:'green',icon:'<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M7 4v6M17 4v6M6 11h12v9H6z"/></svg>',pct:Math.min(100,manifiestos/Math.max(1,total)*100)},{target:'procRemesasContent',title:'Remesas pendientes',value:pend,note:'Remesas todavía abiertas en la plataforma según los filtros seleccionados.',color:'#ee8200',cls:'orange',icon:'<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7h11v10H3z"/><path d="M14 10h3l4 3v4h-7z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="17.5" cy="18.5" r="1.5"/></svg>',pct:Math.min(100,pend/Math.max(1,total)*100)}];cards.forEach(function(c){$(c.target).innerHTML='<div class="od-stage-top"><div><h3>'+c.title+'</h3><div class="od-stage-num">'+c.value+'</div></div><div class="od-stage-accent '+c.cls+'">'+c.icon+'</div></div><div class="od-stage-note">'+c.note+'</div><div class="od-stage-strip"><span style="width:'+c.pct+'%;background:'+c.color+'"></span></div>'})}
 function renderStatus(){var a=rows(false),m=countBy(a,'status'),d=m.Cumplido||0,p=m.Pendiente||0,t=d+p,active=$('filterState').value;$('statusTitle').textContent=d+' remesas están cumplidas y '+p+' continúan pendientes en la plataforma';$('statusContent').innerHTML='<div class="mix-card"><div><div class="stacked-title">Estado global del filtro actual</div><div class="stacked-bar"><button class="stacked-seg od-clickable" data-st="Cumplido" style="width:'+(t?d/t*100:0)+'%;background:#7447dc;border:0"></button><button class="stacked-seg od-clickable" data-st="Pendiente" style="width:'+(t?p/t*100:0)+'%;background:#ee8200;border:0"></button></div><div class="status-buttons"><button class="status-btn od-clickable '+(active==='Cumplido'?'is-active':'')+'" data-st="Cumplido"><span><strong>Cumplidas</strong><br><span>'+pct(d,t)+'%</span></span><strong>'+d+'</strong></button><button class="status-btn od-clickable '+(active==='Pendiente'?'is-active':'')+'" data-st="Pendiente"><span><strong>Pendientes</strong><br><span>'+pct(p,t)+'%</span></span><strong>'+p+'</strong></button></div></div><div class="kpi-side"><div class="mini-stat"><div class="mini-stat-num">'+pct(d,t)+'%</div><div class="mini-stat-label">ya está cumplido</div></div><div class="mini-stat"><div class="mini-stat-num">'+pct(p,t)+'%</div><div class="mini-stat-label">sigue pendiente de cierre</div></div></div></div>';Array.from($('statusContent').querySelectorAll('[data-st]')).forEach(function(b){b.addEventListener('click',function(){var s=this.dataset.st;$('filterState').value=$('filterState').value===s?'':s;if(s!=='Pendiente')state.aging='';renderAll()})})}
