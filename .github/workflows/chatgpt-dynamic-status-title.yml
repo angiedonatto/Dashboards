@@ -1,0 +1,45 @@
+name: ChatGPT dynamic status title
+
+on:
+  push:
+    branches:
+      - chatgpt/status-thermometer
+
+permissions:
+  contents: write
+
+jobs:
+  patch-title:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/status-thermometer
+      - name: Patch dynamic title
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old = "$('statusTitle').textContent='Cumplimiento operativo';$('statusContent').innerHTML='<div class=\"status-panel-sub\">Remesas y manifiestos según los filtros actuales</div>"
+          new = "var statusHeadline,statusSub;if(!t){statusHeadline='Sin remesas en este filtro';statusSub='Ajusta los filtros para ver el cumplimiento'}else if(!p){statusHeadline='Todo al día';statusSub='100% de cumplimiento'}else{statusHeadline=p+(p===1?' remesa por cumplir':' remesas por cumplir');statusSub=remPendPct+'% del total · '+manPend+(manPend===1?' manifiesto pendiente':' manifiestos pendientes')};$('statusTitle').textContent=statusHeadline;$('statusContent').innerHTML='<div class=\"status-panel-sub\">'+statusSub+'</div>"
+
+          if old not in text:
+              raise SystemExit('Dynamic-title target not found')
+
+          text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit dynamic title
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/chatgpt-dynamic-status-title.yml
+          git add index.html .github/workflows/chatgpt-dynamic-status-title.yml
+          git commit -m "Make compliance title dynamic and actionable"
+          git push origin HEAD:chatgpt/status-thermometer
