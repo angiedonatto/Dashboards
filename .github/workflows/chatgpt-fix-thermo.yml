@@ -1,0 +1,42 @@
+name: ChatGPT fix thermometer heights
+
+on:
+  push:
+    branches:
+      - chatgpt/status-thermometer
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-preview:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/status-thermometer
+
+      - name: Fix thermometer heights
+        run: python tools/fix_thermo_heights.py
+
+      - name: Capture actual dashboard
+        run: |
+          python3 -m http.server 4173 >/tmp/dashboard-http.log 2>&1 &
+          sleep 2
+          google-chrome --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1440,1800 --screenshot=dashboard-option-a-fixed.png http://127.0.0.1:4173/index.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-option-a-fixed-preview
+          path: dashboard-option-a-fixed.png
+          retention-days: 1
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f tools/fix_thermo_heights.py .github/workflows/chatgpt-fix-thermo.yml
+          git add index.html tools/fix_thermo_heights.py .github/workflows/chatgpt-fix-thermo.yml
+          git commit -m "Fix compliance thermometer segment rendering"
+          git push origin HEAD:chatgpt/status-thermometer
