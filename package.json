@@ -1,0 +1,22 @@
+{
+  "name": "dashboards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "python3 dev-server.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angiedonatto/Dashboards.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/angiedonatto/Dashboards/issues"
+  },
+  "homepage": "https://github.com/angiedonatto/Dashboards#readme"
+}
