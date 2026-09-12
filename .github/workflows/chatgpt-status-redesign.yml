@@ -5,9 +5,27 @@ on:
     branches:
       - chatgpt/status-thermometer
 
+permissions:
+  contents: write
+
 jobs:
-  test:
+  patch-status:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Test runner
-        run: echo "workflow available"
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/status-thermometer
+      - name: Patch index
+        run: python tools/patch_status.py
+      - name: Commit chart redesign
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Redesign compliance chart as vertical thermometers"
+          git push origin HEAD:chatgpt/status-thermometer
