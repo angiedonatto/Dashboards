@@ -1,0 +1,66 @@
+name: ChatGPT widen compliance panel
+
+on:
+  push:
+    branches:
+      - chatgpt/status-thermometer
+
+permissions:
+  contents: write
+
+jobs:
+  widen-and-preview:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/status-thermometer
+
+      - name: Widen compliance panel without adding vertical bulk
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '<div class="od-grid od-major-row"><article id="statusPanel" class="od-panel od-card span-8 od-animate"><h3 id="statusTitle">Remesas cumplidas vs remesas con cumplimiento pendiente</h3><div id="statusContent"></div></article><article id="agingPanel" class="od-panel od-card span-4 od-animate">'
+          new = '<div class="od-grid od-major-row"><article id="statusPanel" class="od-panel od-card span-9 od-animate"><h3 id="statusTitle">Remesas cumplidas vs remesas con cumplimiento pendiente</h3><div id="statusContent"></div></article><article id="agingPanel" class="od-panel od-card span-3 od-animate">'
+          if old not in s:
+              raise SystemExit('major-row target not found')
+          s = s.replace(old, new, 1)
+
+          s = s.replace('.status-thermo-viz{display:grid;grid-template-columns:minmax(72px,1fr) 40px minmax(126px,1.25fr);gap:10px;align-items:stretch;height:170px;max-width:350px;margin:0 auto 12px}',
+                        '.status-thermo-viz{display:grid;grid-template-columns:minmax(88px,1fr) 44px minmax(145px,1.35fr);gap:12px;align-items:stretch;height:158px;max-width:430px;margin:0 auto 10px}',1)
+          s = s.replace('.status-thermo-track{height:170px;', '.status-thermo-track{height:158px;',1)
+          s = s.replace('.status-thermo-card{border:1px solid #d8e3f2;background:#fff;border-radius:14px;padding:14px 15px;min-width:0}',
+                        '.status-thermo-card{border:1px solid #d8e3f2;background:#fff;border-radius:14px;padding:13px 16px;min-width:0}',1)
+          s = s.replace('.status-summary-row{appearance:none;width:100%;', '.status-summary-row{appearance:none;width:100%;',1)
+          s = s.replace('@media(max-width:900px){.status-thermo-wrap{grid-template-columns:1fr}.status-thermo-viz{grid-template-columns:minmax(66px,1fr) 38px minmax(116px,1.2fr)}}',
+                        '@media(max-width:1100px){#statusPanel.span-9,#agingPanel.span-3{grid-column:span 12}}@media(max-width:900px){.status-thermo-wrap{grid-template-columns:1fr}.status-thermo-viz{grid-template-columns:minmax(72px,1fr) 40px minmax(126px,1.25fr);max-width:390px}}',1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Capture actual dashboard
+        shell: bash
+        run: |
+          python3 -m http.server 4173 >/tmp/dashboard-http.log 2>&1 &
+          sleep 2
+          google-chrome --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1440,1800 --screenshot=dashboard-wide.png http://127.0.0.1:4173/index.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-wide-preview
+          path: dashboard-wide.png
+          retention-days: 1
+
+      - name: Commit widened panel
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Widen compliance panel and rebalance thermometer layout"
+          git push origin HEAD:chatgpt/status-thermometer
